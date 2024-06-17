@@ -1,3 +1,6 @@
+import graphviz
+from regex_parser import parse_regex
+
 class NFA:
     def __init__(self):
         self.states = []
@@ -27,10 +30,30 @@ class NFA:
         self.accept_state = state
         self.steps.append(f"Set accept state: {state}")
 
+    def to_graphviz(self, filename="nfa"):
+        dot = graphviz.Digraph(format='png')
+        for state in self.states:
+            if state == self.start_state:
+                dot.node(str(state), shape='doublecircle', color='green')
+            elif state == self.accept_state:
+                dot.node(str(state), shape='doublecircle', color='red')
+            else:
+                dot.node(str(state), shape='circle')
+        
+        for from_state, transitions in self.transitions.items():
+            for input_char, to_states in transitions.items():
+                for to_state in to_states:
+                    dot.edge(str(from_state), str(to_state), label=input_char)
+        
+        dot.render(filename)
+
+
 def regex_to_nfa(regex):
     nfa = NFA()
     state_stack = []
     operator_stack = []
+
+    parsed_regex = parse_regex(regex)
 
     def process_operator():
         operator = operator_stack.pop()
@@ -59,25 +82,24 @@ def regex_to_nfa(regex):
             nfa.add_transition(first_end, '', second_start)
             state_stack.append((first_start, second_end))
 
-    for char in regex:
-        if char.isalpha():
+    for token in parsed_regex:
+        if isinstance(token, tuple):
+            left, operator, right = token
+            state_stack.append((left, right))
+            operator_stack.append(operator)
+            process_operator()
+        elif token.isalpha():
             start = nfa.add_state()
             end = nfa.add_state()
-            nfa.add_transition(start, char, end)
+            nfa.add_transition(start, token, end)
             state_stack.append((start, end))
-        elif char == '*':
-            operator_stack.append(char)
+        elif token == '*':
+            operator_stack.append(token)
             process_operator()
-        elif char in {'|', '.'}:
+        elif token in {'|', '.'}:
             while operator_stack and operator_stack[-1] in {'|', '.'}:
                 process_operator()
-            operator_stack.append(char)
-        elif char == '(':
-            operator_stack.append(char)
-        elif char == ')':
-            while operator_stack and operator_stack[-1] != '(':
-                process_operator()
-            operator_stack.pop()
+            operator_stack.append(token)
 
     while operator_stack:
         process_operator()

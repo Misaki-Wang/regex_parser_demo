@@ -1,3 +1,5 @@
+import graphviz
+
 class DFA:
     def __init__(self):
         self.states = []
@@ -26,6 +28,23 @@ class DFA:
     def add_accept_state(self, state):
         self.accept_states.append(state)
         self.steps.append(f"Add accept state: {state}")
+
+    def to_graphviz(self, filename="dfa"):
+        dot = graphviz.Digraph(format='png')
+        for state in self.states:
+            if state == self.start_state:
+                dot.node(str(state), shape='doublecircle', color='green')
+            elif state in self.accept_states:
+                dot.node(str(state), shape='doublecircle', color='red')
+            else:
+                dot.node(str(state), shape='circle')
+        
+        for from_state, transitions in self.transitions.items():
+            for input_char, to_states in transitions.items():
+                for to_state in to_states:
+                    dot.edge(str(from_state), str(to_state), label=input_char)
+        
+        dot.render(filename)
 
 def nfa_to_dfa(nfa):
     dfa = DFA()
