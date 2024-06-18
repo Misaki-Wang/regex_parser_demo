@@ -1,8 +1,18 @@
+'''
+Author: misaki misakiwang74@gmail.com
+Date: 2024-06-18 15:01:16
+LastEditors: misaki misakiwang74@gmail.com
+LastEditTime: 2024-06-18 15:59:32
+FilePath: /regex_parser_demo/src/gui.py
+Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+'''
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from src.nfa import NFA, regex_to_nfa
 from src.dfa import DFA, nfa_to_dfa
+
+result_dir = "./results/"
 
 class RegexParserGUI:
     def __init__(self, master):
@@ -34,7 +44,7 @@ class RegexParserGUI:
         nfa.to_graphviz("nfa")
         self.result_label.config(text="NFA created. States: {}".format(nfa.states))
         self.steps_label.config(text="\n".join(nfa.steps))
-        self.display_image("nfa.png")
+        self.display_image(f"{result_dir}nfa.png")
 
     def convert_to_dfa(self):
         regex = self.regex_entry.get()
@@ -43,7 +53,7 @@ class RegexParserGUI:
         dfa.to_graphviz("dfa")
         self.result_label.config(text="DFA created. States: {}".format(dfa.states))
         self.steps_label.config(text="\n".join(dfa.steps))
-        self.display_image("dfa.png")
+        self.display_image(f"{result_dir}dfa.png")
 
     def display_image(self, image_path):
         img = Image.open(image_path)
