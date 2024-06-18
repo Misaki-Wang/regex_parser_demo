@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-from nfa import NFA, regex_to_nfa
-from dfa import DFA, nfa_to_dfa
+from src.nfa import NFA, regex_to_nfa
+from src.dfa import DFA, nfa_to_dfa
 
 class RegexParserGUI:
     def __init__(self, master):
@@ -51,7 +51,10 @@ class RegexParserGUI:
         self.photo = ImageTk.PhotoImage(img)
         self.canvas.create_image(0, 0, anchor=tk.NW, image=self.photo)
 
-if __name__ == "__main__":
+def main():
     root = tk.Tk()
     app = RegexParserGUI(root)
     root.mainloop()
+
+if __name__ == "__main__":
+    main()

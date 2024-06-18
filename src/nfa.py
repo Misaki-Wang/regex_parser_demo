@@ -1,5 +1,5 @@
 import graphviz
-from regex_parser import parse_regex
+from src.regex_parser import parse_regex
 
 class NFA:
     def __init__(self):
