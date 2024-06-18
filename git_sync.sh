@@ -9,6 +9,7 @@ fi
 
 COMMIT_MESSAGE=$1
 
+git pull
 # 添加所有更改到暂存区
 git add .
 
